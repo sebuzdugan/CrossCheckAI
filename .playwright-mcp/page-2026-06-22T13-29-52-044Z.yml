@@ -1,0 +1,51 @@
+- generic [ref=e5]:
+  - banner [ref=e6]:
+    - generic [ref=e7]:
+      - text: CrossCheck
+      - generic [ref=e9]: AI
+    - navigation [ref=e10]:
+      - link "get a key" [ref=e11] [cursor=pointer]:
+        - /url: https://openrouter.ai/keys
+      - link "source" [ref=e12] [cursor=pointer]:
+        - /url: https://github.com/sebuzdugan/CrossCheckAI
+  - generic [ref=e13]:
+    - generic [ref=e14]: one question · many minds
+    - heading "Don't trust one model. Cross-check it." [level=1] [ref=e15]:
+      - text: Don't trust one
+      - text: model. Cross-check it.
+    - paragraph [ref=e16]: Ask five frontier LLMs the same question at once. See where they agree, where they split, and — the part that matters — why the disagreement matters.
+    - generic [ref=e17]:
+      - generic [ref=e18]:
+        - generic [ref=e19]: ›
+        - textbox "Ask something you genuinely weren't sure about…" [ref=e20]
+        - button "cross-check" [disabled] [ref=e21]
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - button "Is it worth learning Rust in 2026?" [ref=e24] [cursor=pointer]
+          - button "Should I take the job offer or counter for more equity?" [ref=e25] [cursor=pointer]
+          - button "Is intermittent fasting actually effective for fat loss?" [ref=e26] [cursor=pointer]
+          - button "Monorepo or polyrepo for a 4-person startup?" [ref=e27] [cursor=pointer]
+        - generic [ref=e28]:
+          - generic [ref=e29]: no key —
+          - button "watch the demo" [ref=e30] [cursor=pointer]
+  - generic [ref=e32]:
+    - generic [ref=e33]:
+      - text: "01"
+      - heading "Never claims correctness" [level=4] [ref=e34]
+      - paragraph [ref=e35]: It reports where models agree and disagree. You stay the judge — the panel just makes the disagreement legible.
+    - generic [ref=e36]:
+      - text: "02"
+      - heading "Dissent is the feature" [level=4] [ref=e37]
+      - paragraph [ref=e38]: A well-explained minority position is the most valuable output. It's elevated, never averaged away.
+    - generic [ref=e39]:
+      - text: "03"
+      - heading "Semantic, not string-matched" [level=4] [ref=e40]
+      - paragraph [ref=e41]: A judge model clusters answers by stance, so “yes, but…” and “absolutely” land together — and opposites don't.
+    - generic [ref=e42]:
+      - text: "04"
+      - heading "Your key, your browser" [level=4] [ref=e43]
+      - paragraph [ref=e44]: Bring-your-own OpenRouter key, stored locally. Calls go straight to the model. No backend, nothing logged.
+  - contentinfo [ref=e45]:
+    - generic [ref=e46]: CrossCheckAI — a second opinion for anything you'd take one model's word on.
+    - link "@sebuzdugan/crosscheck" [ref=e48] [cursor=pointer]:
+      - /url: https://www.npmjs.com/package/@sebuzdugan/crosscheck
