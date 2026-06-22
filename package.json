@@ -1,0 +1,15 @@
+{
+  "name": "crosscheckai",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Ask multiple frontier LLMs the same question; see where they agree, disagree, and why the disagreement matters.",
+  "packageManager": "pnpm@10.19.0",
+  "scripts": {
+    "build": "pnpm --filter @sebuzdugan/crosscheck build && pnpm --filter @sebuzdugan/crosscheck-cli build",
+    "typecheck": "pnpm -r typecheck",
+    "cli": "pnpm --filter @sebuzdugan/crosscheck-cli start --",
+    "web:dev": "pnpm --filter crosscheck-web dev",
+    "web:build": "pnpm --filter crosscheck-web build"
+  }
+}

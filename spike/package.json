@@ -1,0 +1,15 @@
+{
+  "name": "crosscheck-spike",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Phase 0 throwaway spike for CrossCheckAI. Deleted before Phase 2.",
+  "scripts": {
+    "spike": "tsx spike.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "tsx": "^4.22.4",
+    "typescript": "^5.7.0"
+  }
+}

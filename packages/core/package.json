@@ -1,0 +1,36 @@
+{
+  "name": "@sebuzdugan/crosscheck",
+  "version": "0.1.0",
+  "description": "Ask multiple frontier LLMs the same question; see where they agree, disagree, and why the disagreement matters. One OpenRouter key, isomorphic (Node + browser), streaming.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "src"],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "keywords": [
+    "llm",
+    "consensus",
+    "second-opinion",
+    "openrouter",
+    "ai",
+    "multi-model",
+    "dissent"
+  ],
+  "license": "MIT",
+  "author": "sebuzdugan",
+  "devDependencies": {
+    "@types/node": "^20.19.0",
+    "typescript": "^5.7.0"
+  }
+}
