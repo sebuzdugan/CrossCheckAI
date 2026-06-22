@@ -1,15 +1,12 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
-// base must match the GitHub Pages repo path: https://sebuzdugan.github.io/CrossCheckAI/
-// Override with BASE_PATH at build time if the repo is renamed.
+// GitHub Pages serves from /<repo>/. Override with BASE_PATH for a custom domain or root.
 const base = process.env.BASE_PATH ?? "/CrossCheckAI/";
 
 export default defineConfig({
   base,
-  plugins: [react()],
-  build: {
-    target: "es2022",
-    sourcemap: false,
-  },
+  plugins: [react(), tailwindcss()],
+  build: { target: "es2022", outDir: "dist", sourcemap: false },
 });

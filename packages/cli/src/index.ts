@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * CrossCheckAI CLI — thin (CLAUDE.md §4). All it does is render the event stream
+ * CrossCheckAI CLI - thin (CLAUDE.md §4). All it does is render the event stream
  * from `runCrossCheck`. Zero clustering / OpenRouter logic lives here.
  */
 import { runCrossCheck, type Agreement, type Cluster } from "@sebuzdugan/crosscheck";
@@ -53,7 +53,7 @@ function parseArgs(argv: string[]): Args {
 }
 
 const HELP = `
-${c.bold("crosscheck")} — ask multiple frontier LLMs the same question; see where they
+${c.bold("crosscheck")} - ask multiple frontier LLMs the same question; see where they
 agree, disagree, and ${c.bold("why the disagreement matters")}.
 
 ${c.bold("Usage")}
@@ -245,7 +245,7 @@ async function main(): Promise<void> {
         break;
       case "run_completed":
         if (ev.report.agreement === "unanimous") {
-          console.log(`\n${c.gray("The panel agreed — but agreement is not proof of correctness.")}`);
+          console.log(`\n${c.gray("The panel agreed - but agreement is not proof of correctness.")}`);
         }
         if (ev.report.failures.length) {
           console.log(`\n${c.gray("Failed panelists:")}`);

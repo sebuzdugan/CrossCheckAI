@@ -1,6 +1,6 @@
 /**
  * A baked, realistic run so the deployed page is alive without a key. Replayed
- * through the SAME CrossCheckEvent contract the live runner uses — the UI can't
+ * through the SAME CrossCheckEvent contract the live runner uses - the UI can't
  * tell the difference. This is a recorded panel on a genuinely contested question.
  */
 import type { CrossCheckEvent } from "@sebuzdugan/crosscheck";
@@ -18,12 +18,12 @@ const ANSWERS: DemoAnswer[] = [
   {
     model: "anthropic/claude-opus-4.8",
     latencyMs: 9120,
-    text: "Avoid raw useEffect for data fetching in 2026. It's not banned, but it's the wrong default: you hand-roll loading/error state, you get request waterfalls, and you have to guard against race conditions on fast re-renders. Reach for your framework's data layer first — Server Components / route loaders if you have them, or a library like TanStack Query for client-driven data. Keep useEffect for synchronizing with non-React systems (subscriptions, the DOM, timers), which is what it's actually for.",
+    text: "Avoid raw useEffect for data fetching in 2026. It's not banned, but it's the wrong default: you hand-roll loading/error state, you get request waterfalls, and you have to guard against race conditions on fast re-renders. Reach for your framework's data layer first - Server Components / route loaders if you have them, or a library like TanStack Query for client-driven data. Keep useEffect for synchronizing with non-React systems (subscriptions, the DOM, timers), which is what it's actually for.",
   },
   {
     model: "openai/gpt-5.5",
     latencyMs: 7400,
-    text: "Treat useEffect-based fetching as a last resort. The modern answer is to move data fetching to the server (React Server Components, framework loaders) or to a caching client library (React Query, SWR) that handles dedup, retries, and stale-while-revalidate for you. Manual useEffect fetching tends to reintroduce bugs those tools already solved — particularly the cleanup/abort dance and double-fetch in Strict Mode.",
+    text: "Treat useEffect-based fetching as a last resort. The modern answer is to move data fetching to the server (React Server Components, framework loaders) or to a caching client library (React Query, SWR) that handles dedup, retries, and stale-while-revalidate for you. Manual useEffect fetching tends to reintroduce bugs those tools already solved - particularly the cleanup/abort dance and double-fetch in Strict Mode.",
   },
   {
     model: "google/gemini-3.1-pro-preview",
@@ -33,12 +33,12 @@ const ANSWERS: DemoAnswer[] = [
   {
     model: "x-ai/grok-4.3",
     latencyMs: 5300,
-    text: "Honestly? For a small component it's completely fine. The 'useEffect is an anti-pattern' framing is overstated. If you're fetching one thing in one place and you handle cleanup with an AbortController, useEffect works and ships. Don't pull in a data library or restructure around Server Components just to load a list on a hobby project — that's over-engineering. Scale up to those tools when the app's data needs actually grow.",
+    text: "Honestly? For a small component it's completely fine. The 'useEffect is an anti-pattern' framing is overstated. If you're fetching one thing in one place and you handle cleanup with an AbortController, useEffect works and ships. Don't pull in a data library or restructure around Server Components just to load a list on a hobby project - that's over-engineering. Scale up to those tools when the app's data needs actually grow.",
   },
   {
     model: "deepseek/deepseek-v4-pro",
     latencyMs: 6800,
-    text: "It depends on scale, and the dogma is unhelpful. For a simple app or a single widget, a useEffect with proper cleanup is perfectly acceptable and keeps your dependency tree small. The anti-pattern label really applies to large apps where you're re-implementing caching, dedup, and synchronization by hand — there, a real data layer earns its keep. Match the tool to the size of the problem.",
+    text: "It depends on scale, and the dogma is unhelpful. For a simple app or a single widget, a useEffect with proper cleanup is perfectly acceptable and keeps your dependency tree small. The anti-pattern label really applies to large apps where you're re-implementing caching, dedup, and synchronization by hand - there, a real data layer earns its keep. Match the tool to the size of the problem.",
   },
 ];
 
@@ -72,7 +72,7 @@ const DISSENT = [
     summary:
       "For a small component with proper cleanup, useEffect fetching is fine; reaching for a data layer can be over-engineering.",
     whyItMatters:
-      "The disagreement isn't really about useEffect — it's about the scale of your app. The majority is optimizing for apps where hand-rolled caching and race-condition handling become a liability; the dissenters are warning against adding heavy tooling to something small. What you should decide: how much data your app actually manages, and whether you already have a framework data layer to lean on.",
+      "The disagreement isn't really about useEffect - it's about the scale of your app. The majority is optimizing for apps where hand-rolled caching and race-condition handling become a liability; the dissenters are warning against adding heavy tooling to something small. What you should decide: how much data your app actually manages, and whether you already have a framework data layer to lean on.",
   },
 ];
 

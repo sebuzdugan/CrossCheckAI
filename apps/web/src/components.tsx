@@ -1,20 +1,45 @@
-/** Presentational pieces for CrossCheckAI. State lives in App / run.ts. */
-import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useRef, type CSSProperties } from "react";
+/** Presentational pieces for CrossCheckAI, styled 1-on-1 with AIEngineerCV. */
+import { useEffect, useRef } from "react";
 import type { Agreement, Cluster, DissentNote } from "@sebuzdugan/crosscheck";
 import type { Voice } from "./run";
 
-const VERDICT_META: Record<Agreement, { label: string; color: string }> = {
-  unanimous: { label: "Unanimous", color: "var(--unanimous)" },
-  majority: { label: "Majority · with dissent", color: "var(--majority)" },
-  split: { label: "Split", color: "var(--split)" },
-  no_consensus: { label: "No consensus", color: "var(--nocon)" },
+const VERDICT_META: Record<
+  Agreement,
+  { label: string; text: string; border: string; bg: string }
+> = {
+  unanimous: { label: "Unanimous", text: "#9fe870", border: "#2f5a32", bg: "#10220f" },
+  majority: { label: "Majority, with dissent", text: "#e8cf94", border: "#5a4f2f", bg: "#1a160f" },
+  split: { label: "Split", text: "#9fc0ec", border: "#2f3f5a", bg: "#0f131a" },
+  no_consensus: { label: "No consensus", text: "#f0b8b8", border: "#5a2f2f", bg: "#1a0f0f" },
 };
 
 export function splitModel(id: string): { vendor: string; name: string } {
   const [vendor, ...rest] = id.split("/");
   return { vendor: vendor ?? id, name: rest.join("/") || id };
 }
+
+function Chip({ model }: { model: string }) {
+  const { vendor, name } = splitModel(model);
+  return (
+    <span className="mono rounded-md border border-[#23282b] bg-[#0a0c0d] px-2 py-1 text-[11px] text-[#cdd2d5]">
+      <span className="text-[#6f767c]">{vendor}/</span>
+      {name}
+    </span>
+  );
+}
+
+const STATUS_DOT: Record<Voice["status"], string> = {
+  pending: "bg-[#3a4248]",
+  streaming: "bg-[#9fe870] pulse",
+  done: "bg-[#9fe870]",
+  failed: "bg-[#e08a8a]",
+};
+const STATUS_BORDER: Record<Voice["status"], string> = {
+  pending: "border-[#1d2225]",
+  streaming: "border-[#2f5a32]",
+  done: "border-[#1d2225]",
+  failed: "border-[#5a2f2f]",
+};
 
 /* ---- a single model's streaming answer ---- */
 export function VoiceCard({ voice, index }: { voice: Voice; index: number }) {
@@ -26,54 +51,67 @@ export function VoiceCard({ voice, index }: { voice: Voice; index: number }) {
     if (el && voice.status === "streaming") el.scrollTop = el.scrollHeight;
   }, [voice.text, voice.status]);
 
+  const statusLabel =
+    voice.status === "streaming"
+      ? "thinking"
+      : voice.status === "done"
+        ? voice.latencyMs != null
+          ? `${(voice.latencyMs / 1000).toFixed(1)}s`
+          : "done"
+        : voice.status === "failed"
+          ? "failed"
+          : "queued";
+
   return (
-    <motion.div
-      className={`voice ${voice.status}`}
-      initial={{ opacity: 0, y: 14 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
+    <div
+      className={`fadeup flex min-h-[180px] flex-col rounded-xl border ${STATUS_BORDER[voice.status]} bg-[#0e1113] p-4`}
+      style={{ animationDelay: `${index * 50}ms` }}
     >
-      <div className="voice-head">
-        <span className="vendor">{vendor}</span>
-        <span className="name">{name}</span>
-        <span className="voice-status">
-          <span className={`status-dot ${voice.status}`} />
-          {voice.status === "streaming" && "thinking"}
-          {voice.status === "done" && voice.latencyMs != null && `${(voice.latencyMs / 1000).toFixed(1)}s`}
-          {voice.status === "failed" && "failed"}
-          {voice.status === "pending" && "queued"}
+      <div className="flex items-center gap-2 border-b border-[#15191b] pb-3">
+        <span className="mono text-[10px] uppercase tracking-[0.08em] text-[#6f767c]">{vendor}</span>
+        <span className="mono text-[13px] text-[#e7e9ea]">{name}</span>
+        <span className="mono ml-auto flex items-center gap-1.5 text-[11px] text-[#8a9197]">
+          <span className={`h-[7px] w-[7px] rounded-full ${STATUS_DOT[voice.status]}`} />
+          {statusLabel}
         </span>
       </div>
-      <div ref={bodyRef} className={`voice-body ${voice.text ? "" : "empty"}`}>
-        {voice.status === "failed"
-          ? voice.error ?? "request failed"
-          : voice.text || (voice.status === "streaming" ? "" : "waiting…")}
+      <div
+        ref={bodyRef}
+        className="answer-body mt-3 max-h-[230px] flex-1 overflow-y-auto whitespace-pre-wrap break-words text-[13.5px] leading-relaxed text-[#aeb4b8]"
+      >
+        {voice.status === "failed" ? (
+          <span className="text-[#cf9a9a]">{voice.error ?? "request failed"}</span>
+        ) : (
+          voice.text || (voice.status === "streaming" ? "" : <span className="text-[#5b6268]">waiting…</span>)
+        )}
         {voice.status === "streaming" && <span className="caret" />}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
 /* ---- the verdict banner ---- */
 export function Verdict({ agreement, summary }: { agreement: Agreement; summary: string }) {
-  const meta = VERDICT_META[agreement];
+  const m = VERDICT_META[agreement];
   return (
-    <motion.div
-      className="verdict"
-      style={{ "--verdict-color": meta.color } as CSSProperties}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+    <div
+      className="fadeup rounded-xl border border-[#1d2225] bg-[#0e1113] p-6"
+      style={{ borderTopColor: m.text, borderTopWidth: "2px" }}
     >
-      <span className="level">
-        <span className="pip" />
-        {meta.label}
+      <span
+        className="mono inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[12px] uppercase tracking-[0.14em]"
+        style={{ color: m.text, borderColor: m.border, background: m.bg }}
+      >
+        <span className="h-[7px] w-[7px] rounded-full" style={{ background: m.text }} />
+        {m.label}
       </span>
-      <div className="summary">{summary}</div>
-      <div className="disclaimer">
-        <span>◇</span> CrossCheckAI reports positions. It never claims an answer is correct.
-      </div>
-    </motion.div>
+      <p className="mt-4 max-w-3xl text-2xl font-bold leading-snug tracking-tight text-[#f2f4f5]">
+        {summary}
+      </p>
+      <p className="mono mt-4 text-[12px] text-[#6f767c]">
+        CrossCheckAI reports positions. It never claims an answer is correct.
+      </p>
+    </div>
   );
 }
 
@@ -82,37 +120,31 @@ export function Positions({ clusters }: { clusters: Cluster[] }) {
   const ordered = [...clusters].sort((a, b) => b.memberModels.length - a.memberModels.length);
   const total = ordered.reduce((n, c) => n + c.memberModels.length, 0);
   return (
-    <div className="positions">
+    <div className="mt-4 flex flex-col gap-3">
       {ordered.map((c, i) => (
-        <motion.div
+        <div
           key={c.clusterId}
-          className={`position ${i === 0 ? "lead" : ""}`}
-          initial={{ opacity: 0, x: -12 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.45, delay: 0.1 + i * 0.08 }}
+          className="fadeup grid grid-cols-[42px_1fr] gap-4 rounded-xl border border-[#1d2225] bg-[#0e1113] p-5"
+          style={{ animationDelay: `${100 + i * 70}ms` }}
         >
-          <div className="rank">{i + 1}</div>
+          <div className={`text-3xl font-bold leading-none ${i === 0 ? "text-[#9fe870]" : "text-[#3a4248]"}`}>
+            {i + 1}
+          </div>
           <div>
-            <div style={{ display: "flex", alignItems: "baseline" }}>
-              <div className="label">{c.label}</div>
-              <span className="share">
+            <div className="flex items-baseline gap-3">
+              <div className="text-lg font-bold tracking-tight text-[#f2f4f5]">{c.label}</div>
+              <span className="mono ml-auto text-[11px] text-[#6f767c]">
                 {c.memberModels.length}/{total}
               </span>
             </div>
-            {c.stance && <div className="stance">{c.stance}</div>}
-            <div className="members">
-              {c.memberModels.map((m) => {
-                const { vendor, name } = splitModel(m);
-                return (
-                  <span className="member" key={m}>
-                    <span className="v">{vendor}/</span>
-                    {name}
-                  </span>
-                );
-              })}
+            {c.stance && <p className="mt-1 text-[14px] leading-relaxed text-[#aeb4b8]">{c.stance}</p>}
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {c.memberModels.map((m) => (
+                <Chip key={m} model={m} />
+              ))}
             </div>
           </div>
-        </motion.div>
+        </div>
       ))}
     </div>
   );
@@ -122,73 +154,60 @@ export function Positions({ clusters }: { clusters: Cluster[] }) {
 export function DissentBlock({ notes }: { notes: DissentNote[] }) {
   if (notes.length === 0) return null;
   return (
-    <div className="dissent-wrap">
-      <AnimatePresence>
-        {notes.map((note) => (
-          <motion.div
-            key={note.clusterId}
-            className="dissent"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <div className="tag">✦ Why the dissent matters</div>
-            <div className="why">{note.whyItMatters}</div>
-            <div className="from">
-              <span className="lbl">dissenting:</span>
-              {note.models.map((m) => {
-                const { vendor, name } = splitModel(m);
-                return (
-                  <span className="member" key={m}>
-                    <span className="v">{vendor}/</span>
-                    {name}
-                  </span>
-                );
-              })}
-            </div>
-          </motion.div>
-        ))}
-      </AnimatePresence>
+    <div className="mt-4 flex flex-col gap-3">
+      {notes.map((note) => (
+        <div
+          key={note.clusterId}
+          className="fadeup relative overflow-hidden rounded-xl border border-[#2f5a32] bg-[#0e150d] p-6 pl-7"
+        >
+          <span className="absolute inset-y-0 left-0 w-1 bg-[#9fe870]" />
+          <div className="mono mb-3 flex items-center gap-2 text-[11px] uppercase tracking-[0.14em] text-[#9fe870]">
+            ✦ why the dissent matters
+          </div>
+          <p className="max-w-3xl text-[17px] leading-relaxed text-[#e7e9ea]">{note.whyItMatters}</p>
+          <div className="mt-4 flex flex-wrap items-center gap-1.5">
+            <span className="mono mr-1 text-[11px] text-[#6f767c]">dissenting:</span>
+            {note.models.map((m) => (
+              <Chip key={m} model={m} />
+            ))}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
 
-const SHIELD = (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-    <path d="M9 12l2 2 4-4" />
-  </svg>
-);
-
 /* ---- bring-your-own-key gate ---- */
-export function KeyGate({
-  onSave,
-  onDemo,
-}: {
-  onSave: (key: string) => void;
-  onDemo: () => void;
-}) {
+export function KeyGate({ onSave, onDemo }: { onSave: (key: string) => void; onDemo: () => void }) {
   const ref = useRef<HTMLInputElement>(null);
   return (
-    <div className="modal-scrim">
-      <motion.div
-        className="modal"
-        initial={{ opacity: 0, scale: 0.96, y: 12 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      >
-        <h3>Bring your own key</h3>
-        <p>
+    <div className="fixed inset-0 z-50 grid place-items-center bg-[#06080a]/80 p-6 backdrop-blur-sm">
+      <div className="fadeup w-full max-w-md rounded-xl border border-[#1d2225] bg-[#0e1113] p-7">
+        <h3 className="text-xl font-bold tracking-tight text-[#f2f4f5]">Bring your own key</h3>
+        <p className="mt-2 text-[14px] leading-relaxed text-[#aeb4b8]">
           CrossCheckAI runs entirely in your browser. Paste an{" "}
-          <a href="https://openrouter.ai/keys" target="_blank" rel="noreferrer">
+          <a className="text-[#9fe870] hover:underline" href="https://openrouter.ai/keys" target="_blank" rel="noreferrer">
             OpenRouter key
           </a>{" "}
-          — one key reaches every model on the panel.
+          and one key reaches every model on the panel.
         </p>
-        <div className="field">
-          <input ref={ref} type="password" placeholder="sk-or-v1-…" spellCheck={false} autoComplete="off" />
+        <div className="mt-4 flex gap-2">
+          <input
+            ref={ref}
+            type="password"
+            placeholder="sk-or-v1-…"
+            spellCheck={false}
+            autoComplete="off"
+            className="mono flex-1 rounded-lg border border-[#23282b] bg-[#0a0c0d] px-3 py-2.5 text-[13px] text-[#dfe3e5] outline-none placeholder:text-[#5b6268] focus:border-[#39424a]"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                const v = ref.current?.value.trim();
+                if (v) onSave(v);
+              }
+            }}
+          />
           <button
-            className="save"
+            className="mono rounded-lg border border-[#2f5a32] bg-[#10220f] px-4 text-[13px] text-[#bfe8c2] transition hover:bg-[#163217]"
             onClick={() => {
               const v = ref.current?.value.trim();
               if (v) onSave(v);
@@ -197,17 +216,14 @@ export function KeyGate({
             Save
           </button>
         </div>
-        <div className="privacy">
-          {SHIELD}
-          <span>
-            Your key is stored only in this browser's <code>localStorage</code> and sent straight to
-            OpenRouter. It never touches a server of ours — there isn't one.
-          </span>
+        <div className="mt-3 rounded-lg border border-[#2f5a32]/50 bg-[#10220f]/40 p-3 text-[12px] leading-relaxed text-[#bfe8c2]">
+          Your key is stored only in this browser's localStorage and sent straight to OpenRouter. It
+          never touches a server of ours; there isn't one.
         </div>
-        <button className="demo-link" onClick={onDemo}>
+        <button className="mono mt-4 w-full text-center text-[12px] text-[#7d858b] hover:text-[#9fe870]" onClick={onDemo}>
           or watch a recorded run first →
         </button>
-      </motion.div>
+      </div>
     </div>
   );
 }
