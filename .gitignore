@@ -3,3 +3,7 @@ node_modules/
 *.local
 dist/
 .DS_Store
+
+# local preview/test artifacts
+.playwright-mcp/
+crosscheck-live.jpeg
