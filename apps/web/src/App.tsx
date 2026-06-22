@@ -286,7 +286,7 @@ export default function App() {
             Built by{" "}
             <a className="font-medium text-[#9fe870]" href="https://x.com/sebuzdugan" target="_blank" rel="noreferrer">
               @sebuzdugan
-            </a>{" "}
+            </a>
             , an AI engineer, for AI engineers.
           </div>
           <div className="mono text-[11px] text-[#565c61]">
